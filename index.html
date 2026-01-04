@@ -322,7 +322,7 @@
                 </div>
                 <div class="error-message" id="errorMessage"></div>
                 
-                <button class="btn-primary" id="btnLogin">🔓 Masuk</button>
+                <button class="btn-primary" onclick="doLogin()">🔓 Masuk</button>
             </div>
             
             <!-- Main Content (Hidden by default) -->
@@ -334,7 +334,7 @@
                 </div>
                 
                 <div style="text-align: center; margin-bottom: 20px;">
-                    <button class="btn-logout" id="btnLogout">🚪 Keluar</button>
+                    <button class="btn-logout" onclick="doLogout()">🚪 Keluar</button>
                 </div>
                 
                 <div class="form-section">
@@ -365,7 +365,7 @@
                     </div>
                     
                     <div class="button-group">
-                        <button class="btn-primary" id="btnSimpan">💾 Simpan</button>
+                        <button class="btn-primary" id="btnSimpan" onclick="doSimpan()">💾 Simpan</button>
                     </div>
                 </div>
                 
@@ -387,11 +387,10 @@
         </div>
     </div>
 
-    <!-- Firebase SDK -->
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <script>
         // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBrR2qnCnrsl2CS_qtLqrUWSKuaH4CBgvE",
@@ -404,13 +403,24 @@
         };
 
         // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
-        // Password (GANTI INI DENGAN PASSWORD KALIAN!)
+        // Password
         const CORRECT_PASSWORD = "abeldinda2025";
 
-        // Check login status
+        // Check login on page load
+        window.onload = function() {
+            checkLogin();
+            
+            // Enter key listener
+            document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    doLogin();
+                }
+            });
+        };
+
         function checkLogin() {
             const isLoggedIn = sessionStorage.getItem('isLoggedIn');
             if (isLoggedIn === 'true') {
@@ -425,7 +435,7 @@
             loadEntries();
         }
 
-        window.login = function() {
+        function doLogin() {
             const password = document.getElementById('passwordInput').value;
             const errorMessage = document.getElementById('errorMessage');
             
@@ -438,26 +448,14 @@
             }
         }
 
-        function logout() {
+        function doLogout() {
             if (confirm('Yakin ingin keluar?')) {
                 sessionStorage.removeItem('isLoggedIn');
                 location.reload();
             }
-        };
+        }
 
-        // Enter key to login
-        document.addEventListener('DOMContentLoaded', function() {
-            const passwordInput = document.getElementById('passwordInput');
-            if (passwordInput) {
-                passwordInput.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        window.login();
-                    }
-                });
-            }
-        });
-
-        window.simpanPesan = async function() {
+        function doSimpan() {
             const nama = document.getElementById('nama').value;
             const tanggal = document.getElementById('tanggal').value;
             const tempat = document.getElementById('tempat').value.trim();
@@ -469,57 +467,52 @@
                 return;
             }
             
-            try {
-                btnSimpan.disabled = true;
-                btnSimpan.textContent = '⏳ Menyimpan...';
-                
-                await addDoc(collection(db, 'pesanKesan'), {
-                    nama: nama,
-                    tanggal: tanggal,
-                    tempat: tempat,
-                    pesan: pesan,
-                    timestamp: new Date().getTime()
-                });
-                
+            btnSimpan.disabled = true;
+            btnSimpan.textContent = '⏳ Menyimpan...';
+            
+            db.collection('pesanKesan').add({
+                nama: nama,
+                tanggal: tanggal,
+                tempat: tempat,
+                pesan: pesan,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(function() {
                 document.getElementById('nama').value = '';
                 document.getElementById('tanggal').value = '';
                 document.getElementById('tempat').value = '';
                 document.getElementById('pesan').value = '';
                 
                 alert('✅ Pesan dan kesan berhasil disimpan!');
-                await loadEntries();
+                loadEntries();
                 
-            } catch (error) {
-                console.error('Error:', error);
-                alert('❌ Gagal menyimpan. Coba lagi!');
-            } finally {
                 btnSimpan.disabled = false;
                 btnSimpan.textContent = '💾 Simpan';
+            }).catch(function(error) {
+                console.error('Error:', error);
+                alert('❌ Gagal menyimpan. Coba lagi!');
+                btnSimpan.disabled = false;
+                btnSimpan.textContent = '💾 Simpan';
+            });
+        }
+
+        function doHapus(id) {
+            if (confirm('Yakin ingin menghapus pesan ini?')) {
+                db.collection('pesanKesan').doc(id).delete().then(function() {
+                    alert('✅ Pesan berhasil dihapus!');
+                    loadEntries();
+                }).catch(function(error) {
+                    console.error('Error:', error);
+                    alert('❌ Gagal menghapus. Coba lagi!');
+                });
             }
         }
 
-        window.hapusEntry = async function(id) {
-            if (confirm('Yakin ingin menghapus pesan ini?')) {
-                try {
-                    await deleteDoc(doc(db, 'pesanKesan', id));
-                    alert('✅ Pesan berhasil dihapus!');
-                    await loadEntries();
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('❌ Gagal menghapus. Coba lagi!');
-                }
-            }
-        };
-
-        async function loadEntries() {
-            try {
-                const q = query(collection(db, 'pesanKesan'), orderBy('timestamp', 'desc'));
-                const querySnapshot = await getDocs(q);
-                
+        function loadEntries() {
+            db.collection('pesanKesan').orderBy('timestamp', 'desc').get().then(function(querySnapshot) {
                 const entriesAbel = [];
                 const entriesDinda = [];
                 
-                querySnapshot.forEach((doc) => {
+                querySnapshot.forEach(function(doc) {
                     const data = doc.data();
                     const entry = {
                         id: doc.id,
@@ -534,11 +527,10 @@
                 });
                 
                 displayEntries(entriesAbel, entriesDinda);
-                
-            } catch (error) {
+            }).catch(function(error) {
                 console.error('Error:', error);
                 document.getElementById('loading').textContent = 'Gagal memuat data. Refresh halaman.';
-            }
+            });
         }
 
         function displayEntries(entriesAbel, entriesDinda) {
@@ -553,31 +545,35 @@
             if (entriesAbel.length === 0) {
                 entriesListAbel.innerHTML = '<div class="no-entries">Belum ada pesan dari Abel</div>';
             } else {
-                entriesListAbel.innerHTML = entriesAbel.map(entry => `
-                    <div class="entry-card">
-                        <div class="entry-header">
-                            <div class="entry-date">${formatTanggal(entry.tanggal)}</div>
+                entriesListAbel.innerHTML = entriesAbel.map(function(entry) {
+                    return `
+                        <div class="entry-card">
+                            <div class="entry-header">
+                                <div class="entry-date">${formatTanggal(entry.tanggal)}</div>
+                            </div>
+                            <div class="entry-location">📍 ${entry.tempat}</div>
+                            <div class="entry-message">${entry.pesan}</div>
+                            <button class="btn-delete" onclick="doHapus('${entry.id}')">🗑️ Hapus</button>
                         </div>
-                        <div class="entry-location">📍 ${entry.tempat}</div>
-                        <div class="entry-message">${entry.pesan}</div>
-                        <button class="btn-delete" onclick="hapusEntry('${entry.id}')">🗑️ Hapus</button>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
             }
             
             if (entriesDinda.length === 0) {
                 entriesListDinda.innerHTML = '<div class="no-entries">Belum ada pesan dari Dinda</div>';
             } else {
-                entriesListDinda.innerHTML = entriesDinda.map(entry => `
-                    <div class="entry-card">
-                        <div class="entry-header">
-                            <div class="entry-date">${formatTanggal(entry.tanggal)}</div>
+                entriesListDinda.innerHTML = entriesDinda.map(function(entry) {
+                    return `
+                        <div class="entry-card">
+                            <div class="entry-header">
+                                <div class="entry-date">${formatTanggal(entry.tanggal)}</div>
+                            </div>
+                            <div class="entry-location">📍 ${entry.tempat}</div>
+                            <div class="entry-message">${entry.pesan}</div>
+                            <button class="btn-delete" onclick="doHapus('${entry.id}')">🗑️ Hapus</button>
                         </div>
-                        <div class="entry-location">📍 ${entry.tempat}</div>
-                        <div class="entry-message">${entry.pesan}</div>
-                        <button class="btn-delete" onclick="hapusEntry('${entry.id}')">🗑️ Hapus</button>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
             }
         }
 
@@ -586,9 +582,6 @@
             const options = { year: 'numeric', month: 'long', day: 'numeric' };
             return date.toLocaleDateString('id-ID', options);
         }
-
-        // Check login saat halaman dibuka
-        checkLogin();
     </script>
 </body>
 </html>
