@@ -153,17 +153,6 @@
             box-shadow: 0 5px 15px rgba(17, 153, 142, 0.4);
         }
         
-        .btn-view {
-            background: white;
-            color: #11998e;
-            border: 2px solid #11998e;
-        }
-        
-        .btn-view:hover {
-            background: #11998e;
-            color: white;
-        }
-        
         .entries-section {
             margin-top: 40px;
             padding-top: 40px;
@@ -299,11 +288,10 @@
                 
                 <div class="button-group">
                     <button class="btn-save" onclick="simpanPesan()">💾 Simpan</button>
-                    <button class="btn-view" onclick="tampilkanEntries()">👁️ Lihat Semua</button>
                 </div>
             </div>
             
-            <div class="entries-section" id="entriesSection" style="display: none;">
+            <div class="entries-section" id="entriesSection">
                 <h2>📚 Riwayat Pesan dan Kesan</h2>
                 <div class="entries-grid">
                     <div class="person-entries">
@@ -322,6 +310,25 @@
     <script>
         let entriesDinda = [];
         let entriesAbel = [];
+        
+        // Load data dari localStorage saat halaman dibuka
+        function loadData() {
+            const savedDinda = localStorage.getItem('entriesDinda');
+            const savedAbel = localStorage.getItem('entriesAbel');
+            
+            if (savedDinda) {
+                entriesDinda = JSON.parse(savedDinda);
+            }
+            if (savedAbel) {
+                entriesAbel = JSON.parse(savedAbel);
+            }
+        }
+        
+        // Simpan data ke localStorage
+        function saveData() {
+            localStorage.setItem('entriesDinda', JSON.stringify(entriesDinda));
+            localStorage.setItem('entriesAbel', JSON.stringify(entriesAbel));
+        }
         
         function simpanPesan() {
             const nama = document.getElementById('nama').value;
@@ -348,6 +355,8 @@
                 entriesAbel.push(entry);
                 entriesAbel.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
             }
+            
+            saveData(); // Simpan ke localStorage
             
             document.getElementById('nama').value = '';
             document.getElementById('tanggal').value = '';
@@ -392,8 +401,6 @@
                     </div>
                 `).join('');
             }
-            
-            entriesSection.style.display = 'block';
         }
         
         function hapusEntry(person, id) {
@@ -403,6 +410,7 @@
                 } else {
                     entriesAbel = entriesAbel.filter(entry => entry.id !== id);
                 }
+                saveData(); // Simpan perubahan ke localStorage
                 tampilkanEntries();
             }
         }
@@ -413,8 +421,9 @@
             return date.toLocaleDateString('id-ID', options);
         }
         
+        // Load data saat halaman dibuka
+        loadData();
         document.getElementById('tanggal').valueAsDate = new Date();
-        
         tampilkanEntries();
     </script>
 </body>
