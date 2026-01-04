@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesan dan Kesan Dinda & Abel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+        
+        .photo-link {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+        
+        .photo-link a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .photo-link a:hover {
+            text-decoration: underline;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .form-section {
+            background: linear-gradient(135deg, #f0fff4 0%, #e6ffed 100%);
+            padding: 30px;
+            border-radius: 15px;
+            border: 3px solid #38ef7d;
+            margin-bottom: 30px;
+        }
+        
+        .form-section h2 {
+            color: #11998e;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            text-align: center;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #38ef7d;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            font-weight: bold;
+            color: #11998e;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        input[type="date"],
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: border-color 0.3s;
+            background: white;
+        }
+        
+        input[type="date"]:focus,
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #11998e;
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        select {
+            cursor: pointer;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-save {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+        
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(17, 153, 142, 0.4);
+        }
+        
+        .btn-view {
+            background: white;
+            color: #11998e;
+            border: 2px solid #11998e;
+        }
+        
+        .btn-view:hover {
+            background: #11998e;
+            color: white;
+        }
+        
+        .entries-section {
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 3px solid #e0e0e0;
+        }
+        
+        .entries-section h2 {
+            color: #11998e;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .entries-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .person-entries h3 {
+            color: #11998e;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #f0fff4 0%, #e6ffed 100%);
+            border-radius: 10px;
+        }
+        
+        .entry-card {
+            background: white;
+            border-left: 5px solid #38ef7d;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .entry-date {
+            color: #666;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        
+        .entry-location {
+            color: #11998e;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .entry-message {
+            color: #333;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+        
+        .no-entries {
+            text-align: center;
+            color: #999;
+            padding: 40px;
+            font-style: italic;
+            background: #f9f9f9;
+            border-radius: 10px;
+        }
+        
+        .btn-delete {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+        
+        .btn-delete:hover {
+            background: #ff5252;
+        }
+        
+        @media (max-width: 768px) {
+            .entries-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💚 Abel & Dinda</h1>
+            <div class="photo-link">
+                <a href="https://drive.google.com/drive/folders/1IBQ5RlW7q_qRqQNWC0K-5pvekqyYts00" target="_blank">
+                    📸 Lihat Koleksi Foto Moment Kami
+                </a>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="form-section">
+                <h2>📝 Tulis Pesan dan Kesan</h2>
+                
+                <div class="form-group">
+                    <label for="nama">Nama</label>
+                    <select id="nama">
+                        <option value="">-- Pilih Nama --</option>
+                        <option value="Abel">Abel</option>
+                        <option value="Dinda">Dinda</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="tanggal">Tanggal Pertemuan</label>
+                    <input type="date" id="tanggal">
+                </div>
+                
+                <div class="form-group">
+                    <label for="tempat">Tempat Pertemuan</label>
+                    <input type="text" id="tempat" placeholder="Masukkan nama tempat">
+                </div>
+                
+                <div class="form-group">
+                    <label for="pesan">Pesan dan Kesan</label>
+                    <textarea id="pesan" placeholder="Tuliskan pesan dan kesanmu..."></textarea>
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn-save" onclick="simpanPesan()">💾 Simpan</button>
+                    <button class="btn-view" onclick="tampilkanEntries()">👁️ Lihat Semua</button>
+                </div>
+            </div>
+            
+            <div class="entries-section" id="entriesSection" style="display: none;">
+                <h2>📚 Riwayat Pesan dan Kesan</h2>
+                <div class="entries-grid">
+                    <div class="person-entries">
+                        <h3>💙 Pesan dari Abel</h3>
+                        <div id="entriesListAbel"></div>
+                    </div>
+                    <div class="person-entries">
+                        <h3>💝 Pesan dari Dinda</h3>
+                        <div id="entriesListDinda"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let entriesDinda = [];
+        let entriesAbel = [];
+        
+        function simpanPesan() {
+            const nama = document.getElementById('nama').value;
+            const tanggal = document.getElementById('tanggal').value;
+            const tempat = document.getElementById('tempat').value.trim();
+            const pesan = document.getElementById('pesan').value.trim();
+            
+            if (!nama || !tanggal || !tempat || !pesan) {
+                alert('Mohon isi semua kolom!');
+                return;
+            }
+            
+            const entry = {
+                id: Date.now(),
+                tanggal: tanggal,
+                tempat: tempat,
+                pesan: pesan
+            };
+            
+            if (nama === 'Dinda') {
+                entriesDinda.push(entry);
+                entriesDinda.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+            } else {
+                entriesAbel.push(entry);
+                entriesAbel.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+            }
+            
+            document.getElementById('nama').value = '';
+            document.getElementById('tanggal').value = '';
+            document.getElementById('tempat').value = '';
+            document.getElementById('pesan').value = '';
+            
+            alert('✅ Pesan dan kesan berhasil disimpan!');
+            tampilkanEntries();
+        }
+        
+        function tampilkanEntries() {
+            const entriesSection = document.getElementById('entriesSection');
+            const entriesListDinda = document.getElementById('entriesListDinda');
+            const entriesListAbel = document.getElementById('entriesListAbel');
+            
+            if (entriesAbel.length === 0) {
+                entriesListAbel.innerHTML = '<div class="no-entries">Belum ada pesan dari Abel</div>';
+            } else {
+                entriesListAbel.innerHTML = entriesAbel.map(entry => `
+                    <div class="entry-card">
+                        <div class="entry-header">
+                            <div class="entry-date">${formatTanggal(entry.tanggal)}</div>
+                        </div>
+                        <div class="entry-location">📍 ${entry.tempat}</div>
+                        <div class="entry-message">${entry.pesan}</div>
+                        <button class="btn-delete" onclick="hapusEntry('abel', ${entry.id})">🗑️ Hapus</button>
+                    </div>
+                `).join('');
+            }
+            
+            if (entriesDinda.length === 0) {
+                entriesListDinda.innerHTML = '<div class="no-entries">Belum ada pesan dari Dinda</div>';
+            } else {
+                entriesListDinda.innerHTML = entriesDinda.map(entry => `
+                    <div class="entry-card">
+                        <div class="entry-header">
+                            <div class="entry-date">${formatTanggal(entry.tanggal)}</div>
+                        </div>
+                        <div class="entry-location">📍 ${entry.tempat}</div>
+                        <div class="entry-message">${entry.pesan}</div>
+                        <button class="btn-delete" onclick="hapusEntry('dinda', ${entry.id})">🗑️ Hapus</button>
+                    </div>
+                `).join('');
+            }
+            
+            entriesSection.style.display = 'block';
+        }
+        
+        function hapusEntry(person, id) {
+            if (confirm('Yakin ingin menghapus pesan ini?')) {
+                if (person === 'dinda') {
+                    entriesDinda = entriesDinda.filter(entry => entry.id !== id);
+                } else {
+                    entriesAbel = entriesAbel.filter(entry => entry.id !== id);
+                }
+                tampilkanEntries();
+            }
+        }
+        
+        function formatTanggal(tanggal) {
+            const date = new Date(tanggal);
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return date.toLocaleDateString('id-ID', options);
+        }
+        
+        document.getElementById('tanggal').valueAsDate = new Date();
+        
+        tampilkanEntries();
+    </script>
+</body>
+</html>
