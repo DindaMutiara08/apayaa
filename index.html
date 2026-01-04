@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pesan dan Kesan Dinda & Abel</title>
+    <title>Pesan dan Kesan Abel & Dinda</title>
     <style>
         * {
             margin: 0;
@@ -40,10 +40,10 @@
         }
         
         .photo-link {
-            background: rgba(255, 255, 255, 0.2);
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
             padding: 15px;
             border-radius: 10px;
-            margin-top: 15px;
+            text-align: center;
         }
         
         .photo-link a {
@@ -62,6 +62,26 @@
         
         .content {
             padding: 40px;
+        }
+        
+        .login-section {
+            background: linear-gradient(135deg, #f0fff4 0%, #e6ffed 100%);
+            padding: 40px;
+            border-radius: 15px;
+            border: 3px solid #38ef7d;
+            max-width: 400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .login-section h2 {
+            color: #11998e;
+            margin-bottom: 20px;
+        }
+        
+        .login-section p {
+            color: #666;
+            margin-bottom: 20px;
         }
         
         .form-section {
@@ -97,6 +117,7 @@
         
         input[type="date"],
         input[type="text"],
+        input[type="password"],
         textarea,
         select {
             width: 100%;
@@ -111,6 +132,7 @@
         
         input[type="date"]:focus,
         input[type="text"]:focus,
+        input[type="password"]:focus,
         textarea:focus,
         select:focus {
             outline: none;
@@ -143,14 +165,32 @@
             transition: all 0.3s;
         }
         
-        .btn-save {
+        .btn-primary {
             background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
             color: white;
         }
         
-        .btn-save:hover {
+        .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(17, 153, 142, 0.4);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-logout {
+            background: #ff6b6b;
+            color: white;
+            padding: 10px 20px;
+            font-size: 0.9em;
+            margin-top: 20px;
+        }
+        
+        .btn-logout:hover {
+            background: #ff5252;
         }
         
         .entries-section {
@@ -240,6 +280,24 @@
             background: #ff5252;
         }
         
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #11998e;
+            font-weight: bold;
+        }
+        
+        .error-message {
+            color: #ff6b6b;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
         @media (max-width: 768px) {
             .entries-grid {
                 grid-template-columns: 1fr;
@@ -251,126 +309,246 @@
     <div class="container">
         <div class="header">
             <h1>💚 Abel & Dinda</h1>
-            <div class="photo-link">
-                <a href="https://drive.google.com/drive/folders/1IBQ5RlW7q_qRqQNWC0K-5pvekqyYts00" target="_blank">
-                    📸 Lihat Koleksi Foto Moment Kami
-                </a>
-            </div>
         </div>
         
         <div class="content">
-            <div class="form-section">
-                <h2>📝 Tulis Pesan dan Kesan</h2>
+            <!-- Login Section -->
+            <div class="login-section" id="loginSection">
+                <h2>🔒 Masukkan Password</h2>
+                <p>Halaman ini dilindungi password</p>
                 
                 <div class="form-group">
-                    <label for="nama">Nama</label>
-                    <select id="nama">
-                        <option value="">-- Pilih Nama --</option>
-                        <option value="Abel">Abel</option>
-                        <option value="Dinda">Dinda</option>
-                    </select>
+                    <input type="password" id="passwordInput" placeholder="Masukkan password">
                 </div>
+                <div class="error-message" id="errorMessage"></div>
                 
-                <div class="form-group">
-                    <label for="tanggal">Tanggal Pertemuan</label>
-                    <input type="date" id="tanggal">
-                </div>
-                
-                <div class="form-group">
-                    <label for="tempat">Tempat Pertemuan</label>
-                    <input type="text" id="tempat" placeholder="Masukkan nama tempat">
-                </div>
-                
-                <div class="form-group">
-                    <label for="pesan">Pesan dan Kesan</label>
-                    <textarea id="pesan" placeholder="Tuliskan pesan dan kesanmu..."></textarea>
-                </div>
-                
-                <div class="button-group">
-                    <button class="btn-save" onclick="simpanPesan()">💾 Simpan</button>
-                </div>
+                <button class="btn-primary" id="btnLogin">🔓 Masuk</button>
             </div>
             
-            <div class="entries-section" id="entriesSection">
-                <h2>📚 Riwayat Pesan dan Kesan</h2>
-                <div class="entries-grid">
-                    <div class="person-entries">
-                        <h3>💙 Pesan dari Abel</h3>
-                        <div id="entriesListAbel"></div>
+            <!-- Main Content (Hidden by default) -->
+            <div id="mainContent" class="hidden">
+                <div class="photo-link" style="margin-bottom: 20px;">
+                    <a href="https://drive.google.com/drive/folders/1IBQ5RlW7q_qRqQNWC0K-5pvekqyYts00" target="_blank">
+                        📸 Lihat Koleksi Foto Moment Kami
+                    </a>
+                </div>
+                
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <button class="btn-logout" id="btnLogout">🚪 Keluar</button>
+                </div>
+                
+                <div class="form-section">
+                    <h2>📝 Tulis Pesan dan Kesan</h2>
+                    
+                    <div class="form-group">
+                        <label for="nama">Nama</label>
+                        <select id="nama">
+                            <option value="">-- Pilih Nama --</option>
+                            <option value="Abel">Abel</option>
+                            <option value="Dinda">Dinda</option>
+                        </select>
                     </div>
-                    <div class="person-entries">
-                        <h3>💝 Pesan dari Dinda</h3>
-                        <div id="entriesListDinda"></div>
+                    
+                    <div class="form-group">
+                        <label for="tanggal">Tanggal Pertemuan</label>
+                        <input type="date" id="tanggal">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tempat">Tempat Pertemuan</label>
+                        <input type="text" id="tempat" placeholder="Masukkan nama tempat">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="pesan">Pesan dan Kesan</label>
+                        <textarea id="pesan" placeholder="Tuliskan pesan dan kesanmu..."></textarea>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="btn-primary" id="btnSimpan">💾 Simpan</button>
+                    </div>
+                </div>
+                
+                <div class="entries-section">
+                    <h2>📚 Riwayat Pesan dan Kesan</h2>
+                    <div class="loading" id="loading">Memuat data...</div>
+                    <div class="entries-grid" id="entriesGrid" style="display: none;">
+                        <div class="person-entries">
+                            <h3>💙 Pesan dari Abel</h3>
+                            <div id="entriesListAbel"></div>
+                        </div>
+                        <div class="person-entries">
+                            <h3>💝 Pesan dari Dinda</h3>
+                            <div id="entriesListDinda"></div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
-    <script>
-        let entriesDinda = [];
-        let entriesAbel = [];
-        
-        // Load data dari localStorage saat halaman dibuka
-        function loadData() {
-            const savedDinda = localStorage.getItem('entriesDinda');
-            const savedAbel = localStorage.getItem('entriesAbel');
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBrR2qnCnrsl2CS_qtLqrUWSKuaH4CBgvE",
+            authDomain: "apayaa-a9648.firebaseapp.com",
+            projectId: "apayaa-a9648",
+            storageBucket: "apayaa-a9648.firebasestorage.app",
+            messagingSenderId: "535191325834",
+            appId: "1:535191325834:web:c2b0d6da168cef07693173",
+            measurementId: "G-CQCVKLF0L8"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Password (GANTI INI DENGAN PASSWORD KALIAN!)
+        const CORRECT_PASSWORD = "abeldinda2025";
+
+        // Check login status
+        function checkLogin() {
+            const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+            if (isLoggedIn === 'true') {
+                showMainContent();
+            }
+        }
+
+        function showMainContent() {
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('mainContent').classList.remove('hidden');
+            document.getElementById('tanggal').valueAsDate = new Date();
+            loadEntries();
+        }
+
+        window.login = function() {
+            const password = document.getElementById('passwordInput').value;
+            const errorMessage = document.getElementById('errorMessage');
             
-            if (savedDinda) {
-                entriesDinda = JSON.parse(savedDinda);
-            }
-            if (savedAbel) {
-                entriesAbel = JSON.parse(savedAbel);
+            if (password === CORRECT_PASSWORD) {
+                sessionStorage.setItem('isLoggedIn', 'true');
+                showMainContent();
+                errorMessage.textContent = '';
+            } else {
+                errorMessage.textContent = '❌ Password salah!';
             }
         }
-        
-        // Simpan data ke localStorage
-        function saveData() {
-            localStorage.setItem('entriesDinda', JSON.stringify(entriesDinda));
-            localStorage.setItem('entriesAbel', JSON.stringify(entriesAbel));
-        }
-        
-        function simpanPesan() {
+
+        function logout() {
+            if (confirm('Yakin ingin keluar?')) {
+                sessionStorage.removeItem('isLoggedIn');
+                location.reload();
+            }
+        };
+
+        // Enter key to login
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.getElementById('passwordInput');
+            if (passwordInput) {
+                passwordInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        window.login();
+                    }
+                });
+            }
+        });
+
+        window.simpanPesan = async function() {
             const nama = document.getElementById('nama').value;
             const tanggal = document.getElementById('tanggal').value;
             const tempat = document.getElementById('tempat').value.trim();
             const pesan = document.getElementById('pesan').value.trim();
+            const btnSimpan = document.getElementById('btnSimpan');
             
             if (!nama || !tanggal || !tempat || !pesan) {
                 alert('Mohon isi semua kolom!');
                 return;
             }
             
-            const entry = {
-                id: Date.now(),
-                tanggal: tanggal,
-                tempat: tempat,
-                pesan: pesan
-            };
-            
-            if (nama === 'Dinda') {
-                entriesDinda.push(entry);
-                entriesDinda.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
-            } else {
-                entriesAbel.push(entry);
-                entriesAbel.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+            try {
+                btnSimpan.disabled = true;
+                btnSimpan.textContent = '⏳ Menyimpan...';
+                
+                await addDoc(collection(db, 'pesanKesan'), {
+                    nama: nama,
+                    tanggal: tanggal,
+                    tempat: tempat,
+                    pesan: pesan,
+                    timestamp: new Date().getTime()
+                });
+                
+                document.getElementById('nama').value = '';
+                document.getElementById('tanggal').value = '';
+                document.getElementById('tempat').value = '';
+                document.getElementById('pesan').value = '';
+                
+                alert('✅ Pesan dan kesan berhasil disimpan!');
+                await loadEntries();
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ Gagal menyimpan. Coba lagi!');
+            } finally {
+                btnSimpan.disabled = false;
+                btnSimpan.textContent = '💾 Simpan';
             }
-            
-            saveData(); // Simpan ke localStorage
-            
-            document.getElementById('nama').value = '';
-            document.getElementById('tanggal').value = '';
-            document.getElementById('tempat').value = '';
-            document.getElementById('pesan').value = '';
-            
-            alert('✅ Pesan dan kesan berhasil disimpan!');
-            tampilkanEntries();
         }
-        
-        function tampilkanEntries() {
-            const entriesSection = document.getElementById('entriesSection');
-            const entriesListDinda = document.getElementById('entriesListDinda');
+
+        window.hapusEntry = async function(id) {
+            if (confirm('Yakin ingin menghapus pesan ini?')) {
+                try {
+                    await deleteDoc(doc(db, 'pesanKesan', id));
+                    alert('✅ Pesan berhasil dihapus!');
+                    await loadEntries();
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('❌ Gagal menghapus. Coba lagi!');
+                }
+            }
+        };
+
+        async function loadEntries() {
+            try {
+                const q = query(collection(db, 'pesanKesan'), orderBy('timestamp', 'desc'));
+                const querySnapshot = await getDocs(q);
+                
+                const entriesAbel = [];
+                const entriesDinda = [];
+                
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const entry = {
+                        id: doc.id,
+                        ...data
+                    };
+                    
+                    if (data.nama === 'Abel') {
+                        entriesAbel.push(entry);
+                    } else {
+                        entriesDinda.push(entry);
+                    }
+                });
+                
+                displayEntries(entriesAbel, entriesDinda);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('loading').textContent = 'Gagal memuat data. Refresh halaman.';
+            }
+        }
+
+        function displayEntries(entriesAbel, entriesDinda) {
+            const loading = document.getElementById('loading');
+            const entriesGrid = document.getElementById('entriesGrid');
             const entriesListAbel = document.getElementById('entriesListAbel');
+            const entriesListDinda = document.getElementById('entriesListDinda');
+            
+            loading.style.display = 'none';
+            entriesGrid.style.display = 'grid';
             
             if (entriesAbel.length === 0) {
                 entriesListAbel.innerHTML = '<div class="no-entries">Belum ada pesan dari Abel</div>';
@@ -382,7 +560,7 @@
                         </div>
                         <div class="entry-location">📍 ${entry.tempat}</div>
                         <div class="entry-message">${entry.pesan}</div>
-                        <button class="btn-delete" onclick="hapusEntry('abel', ${entry.id})">🗑️ Hapus</button>
+                        <button class="btn-delete" onclick="hapusEntry('${entry.id}')">🗑️ Hapus</button>
                     </div>
                 `).join('');
             }
@@ -397,34 +575,20 @@
                         </div>
                         <div class="entry-location">📍 ${entry.tempat}</div>
                         <div class="entry-message">${entry.pesan}</div>
-                        <button class="btn-delete" onclick="hapusEntry('dinda', ${entry.id})">🗑️ Hapus</button>
+                        <button class="btn-delete" onclick="hapusEntry('${entry.id}')">🗑️ Hapus</button>
                     </div>
                 `).join('');
             }
         }
-        
-        function hapusEntry(person, id) {
-            if (confirm('Yakin ingin menghapus pesan ini?')) {
-                if (person === 'dinda') {
-                    entriesDinda = entriesDinda.filter(entry => entry.id !== id);
-                } else {
-                    entriesAbel = entriesAbel.filter(entry => entry.id !== id);
-                }
-                saveData(); // Simpan perubahan ke localStorage
-                tampilkanEntries();
-            }
-        }
-        
+
         function formatTanggal(tanggal) {
             const date = new Date(tanggal);
             const options = { year: 'numeric', month: 'long', day: 'numeric' };
             return date.toLocaleDateString('id-ID', options);
         }
-        
-        // Load data saat halaman dibuka
-        loadData();
-        document.getElementById('tanggal').valueAsDate = new Date();
-        tampilkanEntries();
+
+        // Check login saat halaman dibuka
+        checkLogin();
     </script>
 </body>
 </html>
